@@ -1,6 +1,12 @@
+import "primeicons/primeicons.css";
+import "primeflex/primeflex.css";
+import "@/themes/devot-theme.css";
+import "../globals.css";
+
 import type { Metadata } from "next";
 import { Nunito_Sans as NunitoSans } from "next/font/google";
-import "../globals.css";
+import { PrimeReactProvider } from "primereact/api";
+import Header from "@/components/header/header";
 
 export const metadata: Metadata = {
   title: "Devot Tracking Tool",
@@ -18,7 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={nunitoSans.className}>{children}</body>
+      <PrimeReactProvider value={{ unstyled: true }}>
+        <body className={nunitoSans.className}>
+          <Header />
+          {children}
+        </body>
+      </PrimeReactProvider>
     </html>
   );
 }

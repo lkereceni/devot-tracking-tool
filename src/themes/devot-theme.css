@@ -1,0 +1,58 @@
+:root {
+  --port-gore: #181846;
+  --orange-500: #ff5722;
+  --orange-700: #ff370f;
+  --lynch: #5f6b8a;
+  --ebony: #0c0d25;
+  --white-lilac: #f9f9fd;
+  --ghost: #c4c5d7;
+}
+
+.bg-port-gore {
+  background-color: var(--port-gore);
+}
+
+.bg-orange-500 {
+  background-color: var(--orange-500);
+}
+
+.hover\:bg-orange-700:hover {
+  background-color: var(--orange-700);
+}
+
+.text-white-lilac {
+  color: var(--white-lilac) !important;
+}
+
+.hover\:text-white-lilac:hover {
+  color: var(--white-lilac) !important;
+}
+
+.text-ghost {
+  color: var(--ghost) !important;
+}
+
+.border-orange-500 {
+  border-color: var(--orange-500) !important;
+}
+
+.border-ghost {
+  border-color: var(--ghost) !important;
+}
+
+.border-round-bottom {
+  border-bottom-left-radius: 22px !important;
+  border-bottom-right-radius: 22px !important;
+}
+
+.border-bottom-5 {
+  border-bottom: 5px solid !important;
+}
+
+.px-45 {
+  padding-inline: 45px !important;
+}
+
+.px-44 {
+  padding-inline: 44px !important;
+}
