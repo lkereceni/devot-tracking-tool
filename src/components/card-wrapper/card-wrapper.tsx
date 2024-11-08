@@ -1,12 +1,19 @@
+import { classNames } from "primereact/utils";
 import React, { FC, ReactNode } from "react";
 
 type CardWrapperProps = {
-  children: ReactNode[];
+  className?: string;
+  children: ReactNode;
 };
 
-const CardWrapper: FC<CardWrapperProps> = ({ children }) => {
+const CardWrapper: FC<CardWrapperProps> = ({ className, children }) => {
   return (
-    <div className="flex flex-column justify-content-center bg-white-lilac border-05px border-whisper gap-49px pb-60px border-round-lg">
+    <div
+      className={classNames(
+        "bg-white-lilac border-05px border-whisper border-round-lg",
+        className
+      )}
+    >
       {children}
     </div>
   );
