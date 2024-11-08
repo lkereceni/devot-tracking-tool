@@ -1,7 +1,8 @@
 :root {
   --port-gore: #181846;
+  --port-gore-700: #131338;
   --orange-500: #ff5722;
-  --orange-700: #ff370f;
+  --orange-700: #e6320e;
   --lynch: #5f6b8a;
   --ebony: #0c0d25;
   --white-lilac: #f9f9fd;
@@ -11,6 +12,10 @@
 
 .bg-port-gore {
   background-color: var(--port-gore) !important;
+}
+
+.bg-port-gore-700 {
+  background-color: var(--port-gore-700) !important;
 }
 
 .bg-orange-500 {
@@ -23,6 +28,10 @@
 
 .bg-white-lilac {
   background-color: var(--white-lilac) !important;
+}
+
+.hover\:bg-port-gore-700:hover {
+  background-color: var(--port-gore-700) !important;
 }
 
 .hover\:bg-orange-700:hover {
@@ -82,8 +91,20 @@
   padding-top: 44px;
 }
 
+.pt-80px {
+  padding-top: 80px;
+}
+
+.pt-82px {
+  padding-top: 82px;
+}
+
 .pb-60px {
   padding-bottom: 60px;
+}
+
+.pr-20px {
+  padding-right: 20px;
 }
 
 .px-35px {
@@ -98,12 +119,24 @@
   padding-inline: 45px;
 }
 
+.px-135px {
+  padding-inline: 135px;
+}
+
 .mt-30px {
   margin-top: 30px;
 }
 
 .mt-50px {
   margin-top: 50px;
+}
+
+.gap-10px {
+  gap: 10px;
+}
+
+.gap-15px {
+  gap: 15px;
 }
 
 .gap-30px {
@@ -130,14 +163,86 @@
   font-size: 18px;
 }
 
+.icon-24px {
+  font-size: 24px;
+}
+
+.icon-25px {
+  font-size: 25px;
+}
+
 .icon-95px {
   font-size: 95px;
+}
+
+.p-paginator {
+  background: transparent;
+  color: var(--ghost);
+  padding: 0.5rem;
+}
+
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last {
+  background-color: transparent;
+  border: 0 none;
+  color: var(--ghost);
+  min-width: 2.286em;
+  height: 2.286em;
+  margin: 0.143rem;
+  transition: box-shadow 0.2s;
+  border-radius: 3px;
+}
+
+.p-paginator .p-paginator-first:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-prev:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-next:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-last:not(.p-disabled):not(.p-highlight):hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ghost);
+}
+
+.p-paginator .p-paginator-first {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.p-paginator .p-paginator-last {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.p-paginator .p-paginator-current {
+  background-color: transparent;
+  border: 0 none;
+  color: white;
+  min-width: 33px;
+  height: 33px;
+  margin: 0.143rem;
+  padding: 0 0.5rem;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+  background-color: transparent;
+  border: 0 none;
+  min-width: 33px;
+  height: 33px;
+  margin: 2px;
+  border-radius: 3px;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: var(--lynch);
+  color: white;
 }
 
 button {
   border: 1px solid transparent;
   border-radius: 3px;
-  background-color: var(--orange-500);
+  font-weight: 700;
+  padding: 0.5rem 0;
 }
 
 input {
@@ -152,6 +257,43 @@ input {
   &::placeholder {
     font-size: 18px;
     color: var(--lynch);
+  }
+}
+
+table {
+  width: 100% !important;
+  margin-top: 36px;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 0.5px solid var(--whisper) !important;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+th {
+  padding: 32px 30px;
+  background-color: var(--white-lilac);
+  text-align: left;
+  color: var(--ebony);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+td {
+  padding: 24px 32px;
+  text-align: left;
+  border: 0.5px solid var(--whisper);
+  color: var(--lynch);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+div i {
+  font-size: 24px;
+  cursor: pointer;
+
+  &:first-child {
+    color: var(--orange-500) !important;
   }
 }
 

@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <PrimeReactProvider value={{ unstyled: true }}>
+      <PrimeReactProvider>
         <body className={`${nunitoSans.className} flex flex-column h-screen`}>
           <Header />
           {children}

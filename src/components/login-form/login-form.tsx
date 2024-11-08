@@ -31,7 +31,7 @@ const LoginForm = () => {
         <Button
           type="submit"
           label="Login"
-          className="bg-orange-500 mt-50px text-white font-bold py-2 cursor-pointer hover:bg-orange-700"
+          className="bg-orange-500 mt-50px text-white cursor-pointer hover:bg-orange-700"
         />
       </form>
     </CardWrapper>
