@@ -3,16 +3,28 @@
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import CardWrapper from "../card-wrapper/card-wrapper";
 import { useRouter } from "next/navigation";
+import signIn from "@/firebase/auth/sign-in";
 
 const LoginForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const formSubmitHandle = (event: FormEvent) => {
+  const handleFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    router.push("/trackers");
+
+    const { result, error } = await signIn(email, password);
+
+    if (error) {
+      return console.log(error);
+    }
+
+    console.log(result);
+
+    return router.push("/trackers");
   };
 
   return (
@@ -20,12 +32,23 @@ const LoginForm = () => {
       <h5 className="text-center text-2xl font-bold text-ebony pt-44px">
         Login
       </h5>
-      <form className="flex flex-column px-35px" onSubmit={formSubmitHandle}>
-        <InputText name="username" autoFocus placeholder="Username" />
+      <form className="flex flex-column px-35px" onSubmit={handleFormSubmit}>
+        <InputText
+          name="email"
+          required
+          type="email"
+          autoFocus
+          placeholder="Email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
         <Password
           toggleMask
           feedback={false}
+          name="password"
+          required
+          type="password"
           placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
           className="mt-30px"
         />
         <Button
