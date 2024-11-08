@@ -6,30 +6,43 @@
   --ebony: #0c0d25;
   --white-lilac: #f9f9fd;
   --ghost: #c4c5d7;
+  --whisper: #ecedf5;
 }
 
 .bg-port-gore {
-  background-color: var(--port-gore);
+  background-color: var(--port-gore) !important;
 }
 
 .bg-orange-500 {
-  background-color: var(--orange-500);
+  background-color: var(--orange-500) !important;
+}
+
+.bg-whisper {
+  background-color: var(--whisper) !important;
 }
 
 .hover\:bg-orange-700:hover {
-  background-color: var(--orange-700);
+  background-color: var(--orange-700) !important;
+}
+
+.bg-white-lilac {
+  background-color: var(--white-lilac) !important;
 }
 
 .text-white-lilac {
   color: var(--white-lilac) !important;
 }
 
-.hover\:text-white-lilac:hover {
-  color: var(--white-lilac) !important;
-}
-
 .text-ghost {
   color: var(--ghost) !important;
+}
+
+.text-ebony {
+  color: var(--ebony) !important;
+}
+
+.hover\:text-white-lilac:hover {
+  color: var(--white-lilac) !important;
 }
 
 .border-orange-500 {
@@ -40,19 +53,87 @@
   border-color: var(--ghost) !important;
 }
 
+.border-whisper {
+  border-color: var(--whisper) !important;
+}
+
 .border-round-bottom {
   border-bottom-left-radius: 22px !important;
   border-bottom-right-radius: 22px !important;
 }
 
-.border-bottom-5 {
-  border-bottom: 5px solid !important;
+.border-05px {
+  border: 0.5px solid;
 }
 
-.px-45 {
-  padding-inline: 45px !important;
+.border-bottom-5px {
+  border-bottom: 5px solid;
 }
 
-.px-44 {
-  padding-inline: 44px !important;
+.pt-44px {
+  padding-top: 44px;
+}
+
+.pb-60px {
+  padding-bottom: 60px;
+}
+
+.px-35px {
+  padding-inline: 35px;
+}
+
+.px-44px {
+  padding-inline: 44px;
+}
+
+.px-45px {
+  padding-inline: 45px;
+}
+
+.mt-30px {
+  margin-top: 30px;
+}
+
+.mt-50px {
+  margin-top: 50px;
+}
+
+.gap-49px {
+  gap: 49px;
+}
+
+.h-36px {
+  height: 36px !important;
+}
+
+.p-icon {
+  color: var(--lynch);
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background-color: var(--orange-500);
+}
+
+input {
+  border: none;
+  border-radius: 3px;
+  background-color: white;
+  color: var(--ebony);
+  font-size: 18px;
+  height: 42px;
+  padding-inline: 20px;
+
+  &::placeholder {
+    font-size: 18px;
+    color: var(--lynch);
+  }
+}
+
+@media screen and (min-width: 576px) {
+  input {
+    width: 330px;
+    height: 42px;
+  }
 }
