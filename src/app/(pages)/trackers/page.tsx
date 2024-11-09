@@ -5,7 +5,7 @@ import React from "react";
 
 export default function TrackersPage() {
   return (
-    <main className="pt-80px px-135px">
+    <>
       <div className="flex flex-row align-items-center gap-3">
         <i className="pi pi-calendar icon-25px" />
         <p className="text-ebony text-2xl font-bold">{`Today (${getToday()})`}</p>
@@ -25,6 +25,6 @@ export default function TrackersPage() {
         />
       </div>
       <Table />
-    </main>
+    </>
   );
 }

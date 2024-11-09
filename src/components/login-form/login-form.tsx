@@ -16,13 +16,7 @@ const LoginForm = () => {
   const handleFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
-    const { result, error } = await signIn(email, password);
-
-    if (error) {
-      return console.log(error);
-    }
-
-    console.log(result);
+    await signIn(email, password);
 
     return router.push("/trackers");
   };

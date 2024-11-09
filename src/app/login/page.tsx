@@ -5,9 +5,9 @@ import RegistrationPrompt from "@/components/registration-prompt/registration-pr
 
 export default function LoginPage() {
   return (
-    <main className="m-auto flex flex-column gap-30px">
+    <div className="flex flex-column gap-30px m-auto">
       <LoginForm />
       <RegistrationPrompt />
-    </main>
+    </div>
   );
 }
