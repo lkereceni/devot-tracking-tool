@@ -11,6 +11,7 @@ import { millisecondsToString, timestampToDate } from "@/utils";
 import Modal from "@/components/modals/modal";
 import { modalType } from "@/constants";
 import { subscribeToTasksHistory } from "@/firebase/firestore/subscribe";
+import useModal from "@/hooks/useModal";
 
 export type HistoryDataTable = {
   id: string;
@@ -24,14 +25,13 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState<Date | null | undefined>(null);
   const [endDate, setEndDate] = useState<Date | null | undefined>(null);
-  const [search, setSearch] = useState("");
-
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   const [selectedTask, setSelectedTask] = useState<HistoryDataTable | null>(
     null
   );
+
+  const editModal = useModal();
+  const deleteModal = useModal();
 
   useEffect(() => {
     const unsubscribe = subscribeToTasksHistory((newTasks) => {
@@ -45,23 +45,13 @@ export default function HistoryPage() {
   }, []);
 
   const handleEditClick = (rowData: HistoryDataTable) => {
-    setIsEditModalVisible(true);
+    editModal.show();
     setSelectedTask(rowData);
   };
 
   const handleDeleteClick = (rowData: HistoryDataTable) => {
-    setIsDeleteModalVisible(true);
+    deleteModal.show();
     setSelectedTask(rowData);
-  };
-
-  const handleEditModalHide = () => {
-    if (!isEditModalVisible) return;
-    setIsEditModalVisible(false);
-  };
-
-  const handleDeleteModalHide = () => {
-    if (!isDeleteModalVisible) return;
-    setIsDeleteModalVisible(false);
   };
 
   const headerMapping: Record<string, string> = {
@@ -140,8 +130,8 @@ export default function HistoryPage() {
           time: selectedTask?.time || "",
           description: selectedTask?.description || "",
         }}
-        visible={isEditModalVisible}
-        onHide={handleEditModalHide}
+        visible={editModal.isVisible}
+        onHide={editModal.hide}
       />
       <Modal
         type={modalType.delete}
@@ -150,8 +140,8 @@ export default function HistoryPage() {
           time: selectedTask?.time || "",
           description: selectedTask?.description || "",
         }}
-        visible={isDeleteModalVisible}
-        onHide={handleDeleteModalHide}
+        visible={deleteModal.isVisible}
+        onHide={deleteModal.hide}
       />
     </>
   );

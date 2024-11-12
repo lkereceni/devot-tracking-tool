@@ -5,6 +5,7 @@ import Table from "@/components/table/table";
 import { modalType } from "@/constants";
 import { updateTaskTime } from "@/firebase/firestore/firestore";
 import { subscribeToTasks } from "@/firebase/firestore/subscribe";
+import useModal from "@/hooks/useModal";
 import useStopwatch from "@/hooks/useStopwatch";
 import { Task } from "@/types";
 import {
@@ -13,7 +14,8 @@ import {
   timeStringToMilliseconds,
 } from "@/utils";
 import { Button } from "primereact/button";
-import React, { useEffect, useState } from "react";
+import { Toast } from "primereact/toast";
+import React, { useEffect, useRef, useState } from "react";
 
 export type TaskDataTable = {
   id: string;
@@ -28,16 +30,19 @@ const headerMapping: Record<string, string> = {
 export default function TrackersPage() {
   const [tasks, setTasks] = useState<Task[] | null>([]);
   const [loading, setLoading] = useState(true);
-  const [isStartNewTimerModalVisible, setIsStartNewTimerModalVisible] =
-    useState(false);
-  const [isStopAllModalVisible, setIsStopAllModalVisible] = useState(false);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [isStopModalVisible, setIsStopModalVisible] = useState(false);
 
   const [selectedTask, setSelectedTask] = useState<TaskDataTable | null>(null);
 
+  const [isStopwatchStarted, setIsStopwatchStarted] = useState(false);
   const { toggleStopwatch, stopwatchStates } = useStopwatch(setTasks);
+
+  const stopwatchToast = useRef<Toast>(null);
+
+  const startNewTimerModal = useModal();
+  const stopAllModal = useModal();
+  const stopModal = useModal();
+  const editModal = useModal();
+  const deleteModal = useModal();
 
   useEffect(() => {
     const unsubscribe = subscribeToTasks((newTasks) => {
@@ -61,32 +66,26 @@ export default function TrackersPage() {
           } as TaskDataTable)
       );
 
-  const handleStartNewTimerModalHide = () => {
-    if (!isStartNewTimerModalVisible) return;
-    setIsStartNewTimerModalVisible(false);
+  const showStopwatchToast = () => {
+    stopwatchToast.current?.show({
+      severity: "error",
+      summary: "Error",
+      detail: "You can't run multiple timers at the same time!",
+    });
   };
 
-  const handleStopAllModalHide = () => {
-    if (!isStopAllModalVisible) return;
-    setIsStopAllModalVisible(false);
-  };
+  const handleStartClick = (rowData: TaskDataTable) => {
+    if (isStopwatchStarted) {
+      showStopwatchToast();
+      return;
+    }
 
-  const handleEditModalHide = () => {
-    if (!isEditModalVisible) return;
-    setIsEditModalVisible(false);
-  };
-
-  const handleDeleteModalHide = () => {
-    if (!isDeleteModalVisible) return;
-    setIsDeleteModalVisible(false);
-  };
-
-  const handleStopModalHide = () => {
-    if (!isStopModalVisible) return;
-    setIsStopModalVisible(false);
+    setIsStopwatchStarted(true);
+    toggleStopwatch(rowData.id);
   };
 
   const handlePauseClick = async (rowData: TaskDataTable) => {
+    setIsStopwatchStarted(false);
     toggleStopwatch(rowData.id);
     await updateTaskTime({
       id: rowData.id,
@@ -95,17 +94,17 @@ export default function TrackersPage() {
   };
 
   const handleEditClick = (rowData: TaskDataTable) => {
-    setIsEditModalVisible(true);
+    editModal.show();
     setSelectedTask(rowData);
   };
 
   const handleStopClick = (rowData: TaskDataTable) => {
-    setIsStopModalVisible(true);
+    stopModal.show();
     setSelectedTask(rowData);
   };
 
   const handleDeleteClick = (rowData: TaskDataTable) => {
-    setIsDeleteModalVisible(true);
+    deleteModal.show();
     setSelectedTask(rowData);
   };
 
@@ -119,7 +118,7 @@ export default function TrackersPage() {
       : {
           key: `start-${rowData.id}`,
           icon: "pi pi-play-circle icon-24px text-orange-500",
-          onClick: () => toggleStopwatch(rowData.id),
+          onClick: () => handleStartClick(rowData),
         },
 
     {
@@ -148,14 +147,14 @@ export default function TrackersPage() {
           icon="pi pi-stopwatch icon-24px"
           className="flex flex-row align-items-center gap-10px bg-orange-500 text-white pr-20px cursor-pointer hover:bg-orange-700"
           style={{ paddingLeft: 10 }}
-          onClick={() => setIsStartNewTimerModalVisible(true)}
+          onClick={() => startNewTimerModal.show()}
         />
         <Button
           label="Stop all"
           icon="pi pi-stop-circle icon-24px"
           className="flex flex-row align-items-center gap-10px bg-port-gore text-white pr-20px cursor-pointer hover:bg-port-gore-700"
           style={{ paddingLeft: 10 }}
-          onClick={() => setIsStopAllModalVisible(true)}
+          onClick={() => stopAllModal.show()}
         />
       </div>
       <Table
@@ -166,13 +165,13 @@ export default function TrackersPage() {
       />
       <Modal
         type={modalType.create}
-        visible={isStartNewTimerModalVisible}
-        onHide={handleStartNewTimerModalHide}
+        visible={startNewTimerModal.isVisible}
+        onHide={startNewTimerModal.hide}
       />
       <Modal
         type={modalType.stopAll}
-        visible={isStopAllModalVisible}
-        onHide={handleStopAllModalHide}
+        visible={stopAllModal.isVisible}
+        onHide={stopAllModal.hide}
       />
       <Modal
         type={modalType.edit}
@@ -181,8 +180,8 @@ export default function TrackersPage() {
           time: selectedTask?.time || "",
           description: selectedTask?.description || "",
         }}
-        visible={isEditModalVisible}
-        onHide={handleEditModalHide}
+        visible={editModal.isVisible}
+        onHide={editModal.hide}
       />
       <Modal
         type={modalType.delete}
@@ -191,8 +190,8 @@ export default function TrackersPage() {
           time: selectedTask?.time || "",
           description: selectedTask?.description || "",
         }}
-        visible={isDeleteModalVisible}
-        onHide={handleDeleteModalHide}
+        visible={deleteModal.isVisible}
+        onHide={deleteModal.hide}
       />
       <Modal
         type={modalType.stop}
@@ -201,9 +200,10 @@ export default function TrackersPage() {
           time: selectedTask?.time || "",
           description: selectedTask?.description || "",
         }}
-        visible={isStopModalVisible}
-        onHide={handleStopModalHide}
+        visible={stopModal.isVisible}
+        onHide={stopModal.hide}
       />
+      <Toast ref={stopwatchToast} position="bottom-center" />
     </>
   );
 }
