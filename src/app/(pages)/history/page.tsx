@@ -3,41 +3,97 @@
 import Table from "@/components/table/table";
 import { Calendar } from "primereact/calendar";
 import { InputText } from "primereact/inputtext";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Button } from "primereact/button";
+import { getHistoryTasks } from "@/firebase/firestore/firestore";
+import { Task } from "@/types";
+import { millisecondsToString, timestampToDate } from "@/utils";
+import Modal from "@/components/modals/modal";
+import { modalType } from "@/constants";
+import {
+  subscribeToTasks,
+  subscribeToTasksHistory,
+} from "@/firebase/firestore/subscribe";
+
+export type HistoryDataTable = {
+  id: string;
+  description: string;
+  date: string;
+  time: string;
+};
 
 export default function HistoryPage() {
+  const [tasks, setTasks] = useState<Task[] | null>([]);
+  const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState<Date | null | undefined>(null);
   const [endDate, setEndDate] = useState<Date | null | undefined>(null);
   const [search, setSearch] = useState("");
 
-  const data = [
-    {
-      date: "15.08.2021.",
-      description: "Jira-123",
-      timeTracked: "05:02:23",
-    },
-    {
-      date: "15.08.2021.",
-      description: "Jira-123",
-      timeTracked: "01:12:28",
-    },
-    {
-      date: "15.08.2021.",
-      description: "Jira-123",
-      timeTracked: "05:02:23",
-    },
-  ];
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
-  const headerMapping: Record<string, string> = {
-    timeTracked: "Time tracked",
+  const [selectedTask, setSelectedTask] = useState<HistoryDataTable | null>(
+    null
+  );
+
+  useEffect(() => {
+    const unsubscribe = subscribeToTasksHistory((newTasks) => {
+      setTasks(newTasks);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleEditClick = (rowData: HistoryDataTable) => {
+    setIsEditModalVisible(true);
+    setSelectedTask(rowData);
   };
 
-  const actionsButtons: ReactElement<typeof Button>[] = [
-    <Button key="edit" icon="pi pi-pencil icon-24px" className="text-lynch" />,
-    <Button key="delete" icon="pi pi-trash icon-24px" className="text-lynch" />,
+  const handleDeleteClick = (rowData: HistoryDataTable) => {
+    setIsDeleteModalVisible(true);
+    setSelectedTask(rowData);
+  };
+
+  const handleEditModalHide = () => {
+    if (!isEditModalVisible) return;
+    setIsEditModalVisible(false);
+  };
+
+  const handleDeleteModalHide = () => {
+    if (!isDeleteModalVisible) return;
+    setIsDeleteModalVisible(false);
+  };
+
+  const headerMapping: Record<string, string> = {
+    time: "Time tracked",
+    timestamp: "Date",
+  };
+
+  const data: HistoryDataTable[] = !tasks
+    ? []
+    : tasks.map(
+        (task) =>
+          ({
+            date: timestampToDate(task.timestamp),
+            id: task.id,
+            description: task.description,
+            time: millisecondsToString(task.time),
+          } as HistoryDataTable)
+      );
+  const actions = (rowData: HistoryDataTable) => [
+    {
+      icon: "pi pi-pencil icon-24px text-lynch",
+      onClick: () => handleEditClick(rowData),
+    },
+    {
+      icon: "pi pi-trash icon-24px text-lynch",
+      onClick: () => handleDeleteClick(rowData),
+    },
   ];
 
   return (
@@ -78,8 +134,29 @@ export default function HistoryPage() {
       </div>
       <Table
         data={data}
+        loading={loading}
         headerMapping={headerMapping}
-        actionsButtons={actionsButtons}
+        actions={actions}
+      />
+      <Modal
+        type={modalType.edit}
+        task={{
+          id: selectedTask?.id || "",
+          time: selectedTask?.time || "",
+          description: selectedTask?.description || "",
+        }}
+        visible={isEditModalVisible}
+        onHide={handleEditModalHide}
+      />
+      <Modal
+        type={modalType.delete}
+        task={{
+          id: selectedTask?.id || "",
+          time: selectedTask?.time || "",
+          description: selectedTask?.description || "",
+        }}
+        visible={isDeleteModalVisible}
+        onHide={handleDeleteModalHide}
       />
     </>
   );

@@ -11,6 +11,15 @@ export const getToday = () => {
   return `${day}.${month}.${year}.`;
 };
 
+export const timestampToDate = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${day}.${month}.${year}.`;
+};
+
 export const millisecondsToString = (milliseconds: number): string => {
   const hours = Math.floor(milliseconds / (1000 * 60 * 60));
   const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));

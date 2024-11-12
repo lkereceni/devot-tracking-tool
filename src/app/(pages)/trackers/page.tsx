@@ -4,7 +4,7 @@ import Modal from "@/components/modals/modal";
 import Table from "@/components/table/table";
 import { modalType } from "@/constants";
 import { updateTaskTime } from "@/firebase/firestore/firestore";
-import { subscribeToTasks } from "@/firebase/firestore/subscribe-to-tasks";
+import { subscribeToTasks } from "@/firebase/firestore/subscribe";
 import useStopwatch from "@/hooks/useStopwatch";
 import { Task } from "@/types";
 import {
@@ -157,52 +157,52 @@ export default function TrackersPage() {
           style={{ paddingLeft: 10 }}
           onClick={() => setIsStopAllModalVisible(true)}
         />
-        <Modal
-          type={modalType.create}
-          visible={isStartNewTimerModalVisible}
-          onHide={handleStartNewTimerModalHide}
-        />
-        <Modal
-          type={modalType.stopAll}
-          visible={isStopAllModalVisible}
-          onHide={handleStopAllModalHide}
-        />
-        <Modal
-          type={modalType.edit}
-          task={{
-            id: selectedTask?.id || "",
-            time: selectedTask?.time || "",
-            description: selectedTask?.description || "",
-          }}
-          visible={isEditModalVisible}
-          onHide={handleEditModalHide}
-        />
-        <Modal
-          type={modalType.delete}
-          task={{
-            id: selectedTask?.id || "",
-            time: selectedTask?.time || "",
-            description: selectedTask?.description || "",
-          }}
-          visible={isDeleteModalVisible}
-          onHide={handleDeleteModalHide}
-        />
-        <Modal
-          type={modalType.stop}
-          task={{
-            id: selectedTask?.id || "",
-            time: selectedTask?.time || "",
-            description: selectedTask?.description || "",
-          }}
-          visible={isStopModalVisible}
-          onHide={handleStopModalHide}
-        />
       </div>
       <Table
         data={data}
         actions={actions}
         headerMapping={headerMapping}
         loading={loading}
+      />
+      <Modal
+        type={modalType.create}
+        visible={isStartNewTimerModalVisible}
+        onHide={handleStartNewTimerModalHide}
+      />
+      <Modal
+        type={modalType.stopAll}
+        visible={isStopAllModalVisible}
+        onHide={handleStopAllModalHide}
+      />
+      <Modal
+        type={modalType.edit}
+        task={{
+          id: selectedTask?.id || "",
+          time: selectedTask?.time || "",
+          description: selectedTask?.description || "",
+        }}
+        visible={isEditModalVisible}
+        onHide={handleEditModalHide}
+      />
+      <Modal
+        type={modalType.delete}
+        task={{
+          id: selectedTask?.id || "",
+          time: selectedTask?.time || "",
+          description: selectedTask?.description || "",
+        }}
+        visible={isDeleteModalVisible}
+        onHide={handleDeleteModalHide}
+      />
+      <Modal
+        type={modalType.stop}
+        task={{
+          id: selectedTask?.id || "",
+          time: selectedTask?.time || "",
+          description: selectedTask?.description || "",
+        }}
+        visible={isStopModalVisible}
+        onHide={handleStopModalHide}
       />
     </>
   );

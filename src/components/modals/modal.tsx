@@ -1,3 +1,4 @@
+import { HistoryDataTable } from "@/app/(pages)/history/page";
 import { TaskDataTable } from "@/app/(pages)/trackers/page";
 import { modalType } from "@/constants";
 import {
@@ -15,7 +16,7 @@ import React, { ChangeEvent, FC, useEffect, useState } from "react";
 
 interface ModalProps extends DialogProps {
   type: ModalType;
-  task?: TaskDataTable;
+  task?: TaskDataTable | HistoryDataTable;
 }
 
 const Modal: FC<ModalProps> = ({ type, task, visible, onHide }: ModalProps) => {
