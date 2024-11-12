@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   query,
@@ -9,18 +10,17 @@ import {
 } from "@firebase/firestore";
 import { firestore } from "../config";
 import { Task } from "@/types";
-import { auth } from "../auth";
+import { firestoreCollection, firestoreTasksCollection } from "@/constants";
+import { getCurrentUser } from "@/utils";
 
 export const getTasks = async (): Promise<Task[] | null> => {
-  const currentUser = auth.currentUser;
-
-  if (!currentUser) throw new Error("User not authenticated!");
+  const currentUser = getCurrentUser();
 
   try {
-    const collectionRef = collection(firestore, "tasks");
+    const collectionRef = collection(firestore, firestoreCollection.tasks);
     const userTasksQuery = query(
       collectionRef,
-      where("userId", "==", currentUser.uid)
+      where(firestoreTasksCollection.userId, "==", currentUser.uid)
     );
     const snapshot = await getDocs(userTasksQuery);
     const tasks = snapshot.docs.map((task) => {
@@ -40,17 +40,44 @@ export const getTasks = async (): Promise<Task[] | null> => {
   return null;
 };
 
-export const addNewTask = async (task: Task): Promise<void> => {
-  const currentUser = auth.currentUser;
-
-  if (!currentUser) throw new Error("User not authenticated!");
+export const getHistoryTasks = async (): Promise<Task[] | null> => {
+  const currentUser = getCurrentUser();
 
   try {
-    const collectionRef = collection(firestore, "tasks");
+    const collectionRef = collection(firestore, firestoreCollection.tasks);
+    const userHistoryTasksQuery = query(
+      collectionRef,
+      where(firestoreTasksCollection.userId, "==", currentUser.uid),
+      where(firestoreTasksCollection.isStopped, "==", true)
+    );
+    const snapshot = await getDocs(userHistoryTasksQuery);
+    const tasks = snapshot.docs.map((task) => {
+      const data = task.data();
+
+      return {
+        timestamp: data.timestamp,
+        description: data.description,
+        time: data.time,
+      };
+    }) as Task[];
+
+    return tasks;
+  } catch (e) {
+    console.error(e);
+  }
+
+  return null;
+};
+
+export const addNewTask = async (task: Task): Promise<void> => {
+  const currentUser = getCurrentUser();
+
+  try {
+    const collectionRef = collection(firestore, firestoreCollection.tasks);
     const taskQuery = query(
       collectionRef,
-      where("description", "==", task.description),
-      where("userId", "==", currentUser.uid)
+      where(firestoreTasksCollection.description, "==", task.description),
+      where(firestoreTasksCollection.userId, "==", currentUser.uid)
     );
     const querySnapshot = await getDocs(taskQuery);
 
@@ -69,24 +96,66 @@ export const addNewTask = async (task: Task): Promise<void> => {
   }
 };
 
-export const updateTask = async (task: {
+export const updateTaskTime = async (task: {
   id: string;
   time: number;
-  description: string;
 }): Promise<void> => {
-  const currentUser = auth.currentUser;
-
-  if (!currentUser) throw new Error("User not authenticated!");
-
-  const documentRef = doc(firestore, "tasks", task.id);
+  getCurrentUser();
+  const documentRef = doc(firestore, firestoreCollection.tasks, task.id);
 
   try {
     await updateDoc(documentRef, {
       time: task.time,
+    });
+  } catch (e) {
+    console.error("Error updating task:", e);
+    alert("Failed to update task!");
+  }
+};
+
+export const updateTaskDescription = async (task: {
+  id: string;
+  description: string;
+}): Promise<void> => {
+  getCurrentUser();
+  const documentRef = doc(firestore, firestoreCollection.tasks, task.id);
+
+  try {
+    await updateDoc(documentRef, {
       description: task.description,
     });
   } catch (e) {
     console.error("Error updating task:", e);
     alert("Failed to update task!");
+  }
+};
+
+export const deleteTask = async (taskId: string): Promise<void> => {
+  getCurrentUser();
+  const documentRef = doc(firestore, firestoreCollection.tasks, taskId);
+
+  try {
+    await deleteDoc(documentRef);
+  } catch (e) {
+    console.error("Error updating task:", e);
+    alert("Failed to delete task!");
+  }
+};
+
+export const stopTask = async (task: {
+  id: string;
+  time: number;
+}): Promise<void> => {
+  getCurrentUser();
+  const documentRef = doc(firestore, firestoreCollection.tasks, task.id);
+
+  try {
+    await updateDoc(documentRef, {
+      time: task.time,
+      isStopped: true,
+    });
+  } catch (e) {
+    console.error("Error stopping task:", e);
+    alert("Failed to stop task!");
   }
 };

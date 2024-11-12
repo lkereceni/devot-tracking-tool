@@ -1,3 +1,6 @@
+import { auth } from "@/firebase/auth";
+import { User } from "firebase/auth";
+
 export const getToday = () => {
   const today = new Date();
 
@@ -18,7 +21,16 @@ export const millisecondsToString = (milliseconds: number): string => {
     .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
 
-export const timeStringToMilliseconds = (timeString: string): number => {
+export const timeStringToMilliseconds = (timeString: string | null): number => {
+  if (timeString === null) return 0;
+
   const [hours, minutes, seconds] = timeString.split(":").map(Number);
   return (hours * 3600 + minutes * 60 + seconds) * 1000;
+};
+
+export const getCurrentUser = (): User => {
+  const currentUser = auth.currentUser;
+  if (!currentUser) throw new Error("User not authenticated!");
+
+  return currentUser;
 };

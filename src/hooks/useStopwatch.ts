@@ -1,4 +1,4 @@
-import { updateTask } from "@/firebase/firestore/firestore";
+import { updateTaskTime } from "@/firebase/firestore/firestore";
 import { Task } from "@/types";
 import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
 
@@ -26,7 +26,7 @@ const useStopwatch = (setTasks: Dispatch<SetStateAction<Task[] | null>>) => {
                   const newTime = task.time + 1000;
 
                   if (newTime % 10000 === 0) {
-                    updateTask({
+                    updateTaskTime({
                       ...task,
                       time: newTime,
                     });

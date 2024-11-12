@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import { auth } from "../auth";
 import { collection, onSnapshot, query, where } from "@firebase/firestore";
 import { firestore } from "../config";
+import { firestoreCollection, firestoreTasksCollection } from "@/constants";
 
 export const subscribeToTasks = (
   setTasks: Dispatch<SetStateAction<Task[] | null>>
@@ -11,10 +12,11 @@ export const subscribeToTasks = (
 
   if (!currentUser) throw new Error("User not authenticated");
 
-  const collectionRef = collection(firestore, "tasks");
+  const collectionRef = collection(firestore, firestoreCollection.tasks);
   const userTasksQuery = query(
     collectionRef,
-    where("userId", "==", currentUser.uid)
+    where(firestoreTasksCollection.userId, "==", currentUser.uid),
+    where(firestoreTasksCollection.isStopped, "==", false)
   );
 
   const unsubscribe = onSnapshot(userTasksQuery, (snapshot) => {
@@ -25,7 +27,6 @@ export const subscribeToTasks = (
         id: data.id,
         time: data.time,
         description: data.description,
-        date: data.date,
       } as Task;
     }) as Task[];
 

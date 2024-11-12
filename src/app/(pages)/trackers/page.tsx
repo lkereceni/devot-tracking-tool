@@ -1,9 +1,9 @@
 "use client";
 
-import StartNewTimerModal from "@/components/modals/start-new-timer-modal";
-import StopAllModal from "@/components/modals/stop-all-modal";
+import Modal from "@/components/modals/modal";
 import Table from "@/components/table/table";
-import { updateTask } from "@/firebase/firestore/firestore";
+import { modalType } from "@/constants";
+import { updateTaskTime } from "@/firebase/firestore/firestore";
 import { subscribeToTasks } from "@/firebase/firestore/subscribe-to-tasks";
 import useStopwatch from "@/hooks/useStopwatch";
 import { Task } from "@/types";
@@ -12,9 +12,10 @@ import {
   millisecondsToString,
   timeStringToMilliseconds,
 } from "@/utils";
+import { Button } from "primereact/button";
 import React, { useEffect, useState } from "react";
 
-type TaskDataTable = {
+export type TaskDataTable = {
   id: string;
   time: string;
   description: string;
@@ -27,6 +28,14 @@ const headerMapping: Record<string, string> = {
 export default function TrackersPage() {
   const [tasks, setTasks] = useState<Task[] | null>([]);
   const [loading, setLoading] = useState(true);
+  const [isStartNewTimerModalVisible, setIsStartNewTimerModalVisible] =
+    useState(false);
+  const [isStopAllModalVisible, setIsStopAllModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isStopModalVisible, setIsStopModalVisible] = useState(false);
+
+  const [selectedTask, setSelectedTask] = useState<TaskDataTable | null>(null);
 
   const { toggleStopwatch, stopwatchStates } = useStopwatch(setTasks);
 
@@ -52,13 +61,52 @@ export default function TrackersPage() {
           } as TaskDataTable)
       );
 
+  const handleStartNewTimerModalHide = () => {
+    if (!isStartNewTimerModalVisible) return;
+    setIsStartNewTimerModalVisible(false);
+  };
+
+  const handleStopAllModalHide = () => {
+    if (!isStopAllModalVisible) return;
+    setIsStopAllModalVisible(false);
+  };
+
+  const handleEditModalHide = () => {
+    if (!isEditModalVisible) return;
+    setIsEditModalVisible(false);
+  };
+
+  const handleDeleteModalHide = () => {
+    if (!isDeleteModalVisible) return;
+    setIsDeleteModalVisible(false);
+  };
+
+  const handleStopModalHide = () => {
+    if (!isStopModalVisible) return;
+    setIsStopModalVisible(false);
+  };
+
   const handlePauseClick = async (rowData: TaskDataTable) => {
     toggleStopwatch(rowData.id);
-    await updateTask({
+    await updateTaskTime({
       id: rowData.id,
       time: timeStringToMilliseconds(rowData.time),
-      description: rowData.description,
     });
+  };
+
+  const handleEditClick = (rowData: TaskDataTable) => {
+    setIsEditModalVisible(true);
+    setSelectedTask(rowData);
+  };
+
+  const handleStopClick = (rowData: TaskDataTable) => {
+    setIsStopModalVisible(true);
+    setSelectedTask(rowData);
+  };
+
+  const handleDeleteClick = (rowData: TaskDataTable) => {
+    setIsDeleteModalVisible(true);
+    setSelectedTask(rowData);
   };
 
   const actions = (rowData: TaskDataTable) => [
@@ -76,15 +124,15 @@ export default function TrackersPage() {
 
     {
       icon: "pi pi-stop-circle icon-24px text-lynch",
-      onClick: () => {},
+      onClick: () => handleStopClick(rowData),
     },
     {
       icon: "pi pi-pencil icon-24px text-lynch",
-      onClick: () => {},
+      onClick: () => handleEditClick(rowData),
     },
     {
       icon: "pi pi-trash icon-24px text-lynch",
-      onClick: () => {},
+      onClick: () => handleDeleteClick(rowData),
     },
   ];
 
@@ -95,8 +143,60 @@ export default function TrackersPage() {
         <p className="text-ebony text-2xl font-bold">{`Today (${getToday()})`}</p>
       </div>
       <div className="w-full flex flex-row align-items-center justify-content-end gap-15px pt-82px">
-        <StartNewTimerModal />
-        <StopAllModal />
+        <Button
+          label="Start new timer"
+          icon="pi pi-stopwatch icon-24px"
+          className="flex flex-row align-items-center gap-10px bg-orange-500 text-white pr-20px cursor-pointer hover:bg-orange-700"
+          style={{ paddingLeft: 10 }}
+          onClick={() => setIsStartNewTimerModalVisible(true)}
+        />
+        <Button
+          label="Stop all"
+          icon="pi pi-stop-circle icon-24px"
+          className="flex flex-row align-items-center gap-10px bg-port-gore text-white pr-20px cursor-pointer hover:bg-port-gore-700"
+          style={{ paddingLeft: 10 }}
+          onClick={() => setIsStopAllModalVisible(true)}
+        />
+        <Modal
+          type={modalType.create}
+          visible={isStartNewTimerModalVisible}
+          onHide={handleStartNewTimerModalHide}
+        />
+        <Modal
+          type={modalType.stopAll}
+          visible={isStopAllModalVisible}
+          onHide={handleStopAllModalHide}
+        />
+        <Modal
+          type={modalType.edit}
+          task={{
+            id: selectedTask?.id || "",
+            time: selectedTask?.time || "",
+            description: selectedTask?.description || "",
+          }}
+          visible={isEditModalVisible}
+          onHide={handleEditModalHide}
+        />
+        <Modal
+          type={modalType.delete}
+          task={{
+            id: selectedTask?.id || "",
+            time: selectedTask?.time || "",
+            description: selectedTask?.description || "",
+          }}
+          visible={isDeleteModalVisible}
+          onHide={handleDeleteModalHide}
+        />
+        <Modal
+          type={modalType.stop}
+          task={{
+            id: selectedTask?.id || "",
+            time: selectedTask?.time || "",
+            description: selectedTask?.description || "",
+          }}
+          visible={isStopModalVisible}
+          onHide={handleStopModalHide}
+        />
       </div>
       <Table
         data={data}
