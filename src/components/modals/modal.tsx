@@ -4,6 +4,7 @@ import { modalType } from "@/constants";
 import {
   addNewTask,
   deleteTask,
+  stopAllTasks,
   stopTask,
   updateTaskDescription,
 } from "@/firebase/firestore/firestore";
@@ -151,6 +152,9 @@ const Modal: FC<ModalProps> = ({ type, task, visible, onHide }: ModalProps) => {
                       id: task.id,
                       time: timeStringToMilliseconds(task.time),
                     });
+                    break;
+                  case "STOP_ALL":
+                    await stopAllTasks();
                     break;
                   case "DELETE":
                     if (task === undefined) return;

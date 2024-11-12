@@ -159,3 +159,28 @@ export const stopTask = async (task: {
     alert("Failed to stop task!");
   }
 };
+
+export const stopAllTasks = async (): Promise<void> => {
+  const currentUser = getCurrentUser();
+
+  try {
+    const collectionRef = collection(firestore, firestoreCollection.tasks);
+    const taskQuery = query(
+      collectionRef,
+      where(firestoreTasksCollection.isStopped, "==", false),
+      where(firestoreTasksCollection.userId, "==", currentUser.uid)
+    );
+    const querySnapshot = await getDocs(taskQuery);
+
+    if (querySnapshot.empty) return;
+
+    const updatePromises = querySnapshot.docs.map((docSnapshot) =>
+      updateDoc(docSnapshot.ref, { isStopped: true })
+    );
+
+    await Promise.all(updatePromises);
+  } catch (e) {
+    console.error("Error adding task:", e);
+    alert("Failed to add new task!");
+  }
+};

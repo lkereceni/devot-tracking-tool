@@ -3,19 +3,14 @@
 import Table from "@/components/table/table";
 import { Calendar } from "primereact/calendar";
 import { InputText } from "primereact/inputtext";
-import { ReactElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
-import { Button } from "primereact/button";
-import { getHistoryTasks } from "@/firebase/firestore/firestore";
 import { Task } from "@/types";
 import { millisecondsToString, timestampToDate } from "@/utils";
 import Modal from "@/components/modals/modal";
 import { modalType } from "@/constants";
-import {
-  subscribeToTasks,
-  subscribeToTasksHistory,
-} from "@/firebase/firestore/subscribe";
+import { subscribeToTasksHistory } from "@/firebase/firestore/subscribe";
 
 export type HistoryDataTable = {
   id: string;
