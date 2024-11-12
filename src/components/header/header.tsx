@@ -19,6 +19,7 @@ const Header = () => {
         height={appLogo.height}
         src={appLogo.src}
         alt="App logo"
+        priority
       />
       <Image
         className="block sm:hidden"

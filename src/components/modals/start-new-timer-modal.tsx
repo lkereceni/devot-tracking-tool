@@ -1,6 +1,7 @@
 "use client";
 
-import { addTaskInProgress } from "@/firebase/firestore/firestore";
+import { addNewTask } from "@/firebase/firestore/firestore";
+import { Task } from "@/types";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
@@ -48,10 +49,11 @@ const StartNewTimerModal = () => {
               <Button
                 label="Save"
                 onClick={async (e) => {
-                  await addTaskInProgress({
-                    time: "00:00:00",
+                  await addNewTask({
+                    time: 0,
                     description: description,
-                  });
+                    date: new Date(),
+                  } as Task);
                   hide(e);
                 }}
                 text

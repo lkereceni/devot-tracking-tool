@@ -1,17 +1,17 @@
-import { TaskInProgress } from "@/types";
+import { Task } from "@/types";
 import { Dispatch, SetStateAction } from "react";
 import { auth } from "../auth";
 import { collection, onSnapshot, query, where } from "@firebase/firestore";
 import { firestore } from "../config";
 
 export const subscribeToTasks = (
-  setTasks: Dispatch<SetStateAction<TaskInProgress[] | null>>
+  setTasks: Dispatch<SetStateAction<Task[] | null>>
 ) => {
   const currentUser = auth.currentUser;
 
   if (!currentUser) throw new Error("User not authenticated");
 
-  const collectionRef = collection(firestore, "tasks-in-progress");
+  const collectionRef = collection(firestore, "tasks");
   const userTasksQuery = query(
     collectionRef,
     where("userId", "==", currentUser.uid)
@@ -22,10 +22,12 @@ export const subscribeToTasks = (
       const data = task.data();
 
       return {
+        id: data.id,
         time: data.time,
         description: data.description,
-      };
-    }) as TaskInProgress[];
+        date: data.date,
+      } as Task;
+    }) as Task[];
 
     setTasks(tasks);
   });

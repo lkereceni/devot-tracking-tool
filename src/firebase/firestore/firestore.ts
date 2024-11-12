@@ -1,17 +1,23 @@
-import { addDoc, collection, getDocs, query, where } from "@firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "@firebase/firestore";
 import { firestore } from "../config";
-import { TaskInProgress } from "@/types";
+import { Task } from "@/types";
 import { auth } from "../auth";
 
-export const getTasksInProgress = async (): Promise<
-  TaskInProgress[] | null
-> => {
+export const getTasks = async (): Promise<Task[] | null> => {
   const currentUser = auth.currentUser;
 
   if (!currentUser) throw new Error("User not authenticated!");
 
   try {
-    const collectionRef = collection(firestore, "tasks-in-progress");
+    const collectionRef = collection(firestore, "tasks");
     const userTasksQuery = query(
       collectionRef,
       where("userId", "==", currentUser.uid)
@@ -24,7 +30,7 @@ export const getTasksInProgress = async (): Promise<
         time: data.time,
         description: data.description,
       };
-    }) as TaskInProgress[];
+    }) as Task[];
 
     return tasks;
   } catch (e) {
@@ -34,15 +40,13 @@ export const getTasksInProgress = async (): Promise<
   return null;
 };
 
-export const addTaskInProgress = async (
-  task: TaskInProgress
-): Promise<void> => {
+export const addNewTask = async (task: Task): Promise<void> => {
   const currentUser = auth.currentUser;
 
   if (!currentUser) throw new Error("User not authenticated!");
 
   try {
-    const collectionRef = collection(firestore, "tasks-in-progress");
+    const collectionRef = collection(firestore, "tasks");
     const taskQuery = query(
       collectionRef,
       where("description", "==", task.description),
@@ -52,13 +56,37 @@ export const addTaskInProgress = async (
 
     if (!querySnapshot.empty) return;
 
-    const id = crypto.randomUUID();
-    await addDoc(collectionRef, {
-      userId: currentUser.uid,
-      id: id,
+    const newDocRef = doc(collectionRef);
+
+    await setDoc(newDocRef, {
       ...task,
+      userId: currentUser.uid,
+      id: newDocRef.id,
     });
   } catch (e) {
-    console.error(e);
+    console.error("Error adding task:", e);
+    alert("Failed to add new task!");
+  }
+};
+
+export const updateTask = async (task: {
+  id: string;
+  time: number;
+  description: string;
+}): Promise<void> => {
+  const currentUser = auth.currentUser;
+
+  if (!currentUser) throw new Error("User not authenticated!");
+
+  const documentRef = doc(firestore, "tasks", task.id);
+
+  try {
+    await updateDoc(documentRef, {
+      time: task.time,
+      description: task.description,
+    });
+  } catch (e) {
+    console.error("Error updating task:", e);
+    alert("Failed to update task!");
   }
 };

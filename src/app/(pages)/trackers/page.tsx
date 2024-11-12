@@ -3,19 +3,32 @@
 import StartNewTimerModal from "@/components/modals/start-new-timer-modal";
 import StopAllModal from "@/components/modals/stop-all-modal";
 import Table from "@/components/table/table";
+import { updateTask } from "@/firebase/firestore/firestore";
 import { subscribeToTasks } from "@/firebase/firestore/subscribe-to-tasks";
-import { TaskInProgress } from "@/types";
-import { getToday } from "@/utils";
-import { Button } from "primereact/button";
-import React, { ReactElement, useEffect, useState } from "react";
+import useStopwatch from "@/hooks/useStopwatch";
+import { Task } from "@/types";
+import {
+  getToday,
+  millisecondsToString,
+  timeStringToMilliseconds,
+} from "@/utils";
+import React, { useEffect, useState } from "react";
+
+type TaskDataTable = {
+  id: string;
+  time: string;
+  description: string;
+};
 
 const headerMapping: Record<string, string> = {
   time: "Time logged",
 };
 
 export default function TrackersPage() {
-  const [tasks, setTasks] = useState<TaskInProgress[] | null>([]);
+  const [tasks, setTasks] = useState<Task[] | null>([]);
   const [loading, setLoading] = useState(true);
+
+  const { toggleStopwatch, stopwatchStates } = useStopwatch(setTasks);
 
   useEffect(() => {
     const unsubscribe = subscribeToTasks((newTasks) => {
@@ -28,19 +41,51 @@ export default function TrackersPage() {
     };
   }, []);
 
-  const actionsButtons: ReactElement<typeof Button>[] = [
-    <Button
-      key="start"
-      icon="pi pi-play-circle icon-24px text-orange-500"
-      className="text-lynch"
-    />,
-    <Button
-      key="stop"
-      icon="pi pi-stop-circle icon-24px"
-      className="text-lynch"
-    />,
-    <Button key="edit" icon="pi pi-pencil icon-24px" className="text-lynch" />,
-    <Button key="delete" icon="pi pi-trash icon-24px" className="text-lynch" />,
+  const data: TaskDataTable[] = !tasks
+    ? []
+    : tasks.map(
+        (task) =>
+          ({
+            id: task.id,
+            time: millisecondsToString(task.time),
+            description: task.description,
+          } as TaskDataTable)
+      );
+
+  const handlePauseClick = async (rowData: TaskDataTable) => {
+    toggleStopwatch(rowData.id);
+    await updateTask({
+      id: rowData.id,
+      time: timeStringToMilliseconds(rowData.time),
+      description: rowData.description,
+    });
+  };
+
+  const actions = (rowData: TaskDataTable) => [
+    stopwatchStates[rowData.id]
+      ? {
+          key: `pause-${rowData.id}`,
+          icon: "pi pi-pause-circle icon-24px text-orange-500",
+          onClick: () => handlePauseClick(rowData),
+        }
+      : {
+          key: `start-${rowData.id}`,
+          icon: "pi pi-play-circle icon-24px text-orange-500",
+          onClick: () => toggleStopwatch(rowData.id),
+        },
+
+    {
+      icon: "pi pi-stop-circle icon-24px text-lynch",
+      onClick: () => {},
+    },
+    {
+      icon: "pi pi-pencil icon-24px text-lynch",
+      onClick: () => {},
+    },
+    {
+      icon: "pi pi-trash icon-24px text-lynch",
+      onClick: () => {},
+    },
   ];
 
   return (
@@ -54,9 +99,9 @@ export default function TrackersPage() {
         <StopAllModal />
       </div>
       <Table
-        data={tasks}
+        data={data}
+        actions={actions}
         headerMapping={headerMapping}
-        actionsButtons={actionsButtons}
         loading={loading}
       />
     </>
