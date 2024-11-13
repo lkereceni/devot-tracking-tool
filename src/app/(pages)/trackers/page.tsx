@@ -141,7 +141,7 @@ export default function TrackersPage() {
         <i className="pi pi-calendar icon-25px" />
         <p className="text-ebony text-2xl font-bold">{`Today (${getToday()})`}</p>
       </div>
-      <div className="w-full flex flex-row align-items-center justify-content-end gap-15px pt-82px">
+      <div className="w-full flex flex-row align-items-center justify-content-end gap-15px pt-82px mb-6">
         <Button
           label="Start new timer"
           icon="pi pi-stopwatch icon-24px"

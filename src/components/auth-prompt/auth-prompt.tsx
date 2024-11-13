@@ -30,7 +30,7 @@ const AuthPrompt: FC<AuthPromptProps> = ({ type, onClick }) => {
   };
 
   return (
-    <CardWrapper className="flex flex-row py-5">
+    <CardWrapper className="flex flex-row flex-wrap py-5">
       <Image
         width={95}
         height={95}

@@ -125,8 +125,8 @@ export default function HistoryPage() {
 
   return (
     <>
-      <p className="text-ebony text-2xl font-bold">{"Trackers history"}</p>
-      <div className="w-full bg-white-lilac flex flex-row align-items-center justify-content-between gap-40px border-radius-8px mt-50px py-22px px-6">
+      <p className="text-ebony text-2xl font-bold">Trackers history</p>
+      <div className="w-full bg-white-lilac flex flex-row align-items-center justify-content-between gap-40px border-radius-8px my-7 py-22px px-6">
         <div className="flex flex-column">
           <label htmlFor="startDate" className="text-lynch">
             Start date

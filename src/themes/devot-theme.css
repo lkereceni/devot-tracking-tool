@@ -659,7 +659,7 @@
     box-shadow: inset 0 0 0 1px #605e5c;
   }
   .p-datepicker table td.p-datepicker-today > span {
-    background: #0078d4;
+    background: var(--orange-500);
     color: #ffffff;
     border-color: transparent;
   }
@@ -3637,8 +3637,8 @@
   .p-datatable .p-datatable-header {
     background: #ffffff;
     color: #323130;
-    border: 1px solid #f3f2f1;
-    border-width: 1px 0 1px 0;
+    border: 0.5px solid var(--whisper);
+    border-width: 0.5px;
     padding: 0.75rem 0.75rem;
     font-weight: 600;
   }
@@ -3651,22 +3651,31 @@
     font-weight: 600;
   }
   .p-datatable .p-datatable-thead > tr > th {
-    text-align: left;
-    padding: 0.75rem 0.75rem;
-    border: 1px solid #f3f2f1;
-    border-width: 0 0 1px 0;
-    font-weight: 600;
-    color: #323130;
-    background: #ffffff;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ebony);
+    background: var(--white-lilac);
     transition: box-shadow 0.2s;
+    text-align: left;
+    padding: 32px 30px;
+    border-top: 0.5px solid var(--whisper);
+  }
+  .p-datatable .p-datatable-thead > tr > th:first-child {
+    border-left: 0.5px solid var(--whisper);
+    border-top-left-radius: 10px;
+  }
+  .p-datatable .p-datatable-thead > tr > th:last-child {
+    border-right: 0.5px solid var(--whisper);
+    border-top-right-radius: 10px;
   }
   .p-datatable .p-datatable-tfoot > tr > td {
     text-align: left;
-    padding: 0.75rem 0.75rem;
-    border: 1px solid #f3f2f1;
+    padding: 24px 32px;
+    border: 0.5px solid var(--whisper);
     border-width: 0 0 1px 0;
     font-weight: 600;
-    color: #323130;
+    font-size: 18px;
+    color: var(--lynch);
     background: #ffffff;
   }
   .p-datatable .p-sortable-column .p-sortable-column-icon {
@@ -3714,14 +3723,14 @@
   }
   .p-datatable .p-datatable-tbody > tr {
     background: #ffffff;
-    color: #323130;
-    transition: box-shadow 0.2s;
+    color: var(--lynch);
+    font-size: 18px;
   }
   .p-datatable .p-datatable-tbody > tr > td {
     text-align: left;
-    border: 1px solid #f3f2f1;
-    border-width: 0 0 1px 0;
-    padding: 0.75rem 0.75rem;
+    padding: 32px 30px;
+    border: none;
+    border: 0.5px solid var(--whisper);
   }
   .p-datatable .p-datatable-tbody > tr > td .p-row-toggler,
   .p-datatable .p-datatable-tbody > tr > td .p-row-editor-init,
@@ -5797,7 +5806,7 @@
     color: #323130;
   }
   .p-breadcrumb .p-breadcrumb-list li .p-menuitem-link .p-menuitem-icon {
-    color: #0078d4;
+    color: var(--lynch);
   }
   .p-breadcrumb .p-breadcrumb-list li.p-menuitem-separator {
     margin: 0 0.5rem 0 0.5rem;
@@ -6524,10 +6533,10 @@
     user-select: none;
   }
   .p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text {
-    color: #323130;
+    color: var(--lynch);
   }
   .p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-icon {
-    color: #0078d4;
+    color: var(--lynch);
     margin-right: 0.5rem;
   }
   .p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-submenu-icon {
@@ -6542,7 +6551,7 @@
     > .p-menuitem-content
     .p-menuitem-link
     .p-menuitem-text {
-    color: #323130;
+    color: var(--lynch);
   }
   .p-menu
     .p-menuitem.p-highlight
@@ -6611,9 +6620,6 @@
   }
   .p-menu.p-menu-overlay {
     background: #ffffff;
-    border: 0 none;
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
-      0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
   }
   .p-menu .p-submenu-header {
     margin: 0;
@@ -8571,7 +8577,7 @@
     font-size: 90%;
   }
   .p-datepicker table td.p-datepicker-today > span {
-    border-radius: 50%;
+    border-radius: 3px;
   }
   .p-datepicker .p-datepicker-buttonbar .p-button {
     font-size: 90%;
@@ -8679,40 +8685,5 @@
   }
   .p-datatable .p-datatable-tbody > tr.p-datatable-dragpoint-bottom > td {
     box-shadow: inset 0 -2px 0 0 #0078d4;
-  }
-}
-
-table {
-  width: 100% !important;
-  margin-top: 36px;
-  border-collapse: separate;
-  border-spacing: 0;
-  border: 0.5px solid var(--whisper) !important;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-
-th {
-  padding: 32px 30px;
-  background-color: var(--white-lilac);
-  text-align: left;
-  color: var(--ebony);
-  font-weight: 700;
-  font-size: 18px;
-}
-
-td {
-  padding: 24px 32px;
-  text-align: left;
-  border: 0.5px solid var(--whisper);
-  color: var(--lynch);
-  font-weight: 600;
-  font-size: 18px;
-}
-
-@media screen and (min-width: 576px) {
-  input {
-    width: 330px;
-    height: 42px;
   }
 }
