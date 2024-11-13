@@ -51,6 +51,8 @@ export default function HistoryPage() {
 
   useEffect(() => {
     if (startDate && endDate && tasks) {
+      endDate.setHours(23, 59, 59, 999);
+
       setFilteredData(
         tasks.filter(
           (task) =>
@@ -63,6 +65,8 @@ export default function HistoryPage() {
         tasks.filter((task) => timestampToDate(task.timestamp)! >= startDate)
       );
     } else if (endDate && tasks) {
+      endDate.setHours(23, 59, 59, 999);
+
       setFilteredData(
         tasks.filter((task) => timestampToDate(task.timestamp)! <= endDate)
       );
