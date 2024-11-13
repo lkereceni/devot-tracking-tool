@@ -34,27 +34,35 @@ const Table = <T extends DataTableValue>({
         }));
 
   return (
-    <DataTable
-      value={data}
-      paginator
-      rows={5}
-      loading={loading}
-      emptyMessage="No tasks found"
-    >
-      {columns.map((col) => (
-        <Column key={col.field} field={col.field} header={col.header} />
-      ))}
-      {actions && (
-        <Column
-          header="Actions"
-          body={(rowData) => {
-            const rowActions = actions(rowData);
-            return <ActionsCell actions={rowActions} />;
-          }}
-          className="w-3rem"
-        />
+    <>
+      {data.length === 0 ? (
+        <div className="flex align-item-center justify-content-center w-full text-lynch">
+          <p>No tasks found</p>
+        </div>
+      ) : (
+        <DataTable
+          value={data}
+          paginator
+          rows={5}
+          loading={loading}
+          emptyMessage="No tasks found"
+        >
+          {columns.map((col) => (
+            <Column key={col.field} field={col.field} header={col.header} />
+          ))}
+          {actions && (
+            <Column
+              header="Actions"
+              body={(rowData) => {
+                const rowActions = actions(rowData);
+                return <ActionsCell actions={rowActions} />;
+              }}
+              className="w-3rem"
+            />
+          )}
+        </DataTable>
       )}
-    </DataTable>
+    </>
   );
 };
 
