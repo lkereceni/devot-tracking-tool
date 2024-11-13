@@ -3,11 +3,13 @@
 import Table from "@/components/table/table";
 import { Calendar } from "primereact/calendar";
 import { InputText } from "primereact/inputtext";
-import { useEffect, useState } from "react";
-import { IconField } from "primereact/iconfield";
-import { InputIcon } from "primereact/inputicon";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Task } from "@/types";
-import { millisecondsToString, timestampToDate } from "@/utils";
+import {
+  millisecondsToString,
+  timestampToDate,
+  timestampToDateString,
+} from "@/utils";
 import Modal from "@/components/modals/modal";
 import { modalType } from "@/constants";
 import { subscribeToTasksHistory } from "@/firebase/firestore/subscribe";
@@ -23,12 +25,15 @@ export type HistoryDataTable = {
 export default function HistoryPage() {
   const [tasks, setTasks] = useState<Task[] | null>([]);
   const [loading, setLoading] = useState(true);
-  const [startDate, setStartDate] = useState<Date | null | undefined>(null);
-  const [endDate, setEndDate] = useState<Date | null | undefined>(null);
+
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [selectedTask, setSelectedTask] = useState<HistoryDataTable | null>(
     null
   );
+  const [filteredData, setFilteredData] = useState<Task[] | null>(tasks);
 
   const editModal = useModal();
   const deleteModal = useModal();
@@ -43,6 +48,28 @@ export default function HistoryPage() {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (startDate && endDate && tasks) {
+      setFilteredData(
+        tasks.filter(
+          (task) =>
+            timestampToDate(task.timestamp) >= startDate &&
+            timestampToDate(task.timestamp) <= endDate
+        )
+      );
+    } else if (startDate && tasks) {
+      setFilteredData(
+        tasks.filter((task) => timestampToDate(task.timestamp)! >= startDate)
+      );
+    } else if (endDate && tasks) {
+      setFilteredData(
+        tasks.filter((task) => timestampToDate(task.timestamp)! <= endDate)
+      );
+    } else {
+      setFilteredData(tasks!);
+    }
+  }, [startDate, endDate, tasks]);
 
   const handleEditClick = (rowData: HistoryDataTable) => {
     editModal.show();
@@ -59,17 +86,6 @@ export default function HistoryPage() {
     timestamp: "Date",
   };
 
-  const data: HistoryDataTable[] = !tasks
-    ? []
-    : tasks.map(
-        (task) =>
-          ({
-            date: timestampToDate(task.timestamp),
-            id: task.id,
-            description: task.description,
-            time: millisecondsToString(task.time),
-          } as HistoryDataTable)
-      );
   const actions = (rowData: HistoryDataTable) => [
     {
       icon: "pi pi-pencil icon-24px text-lynch",
@@ -81,10 +97,36 @@ export default function HistoryPage() {
     },
   ];
 
+  const data: HistoryDataTable[] = !filteredData
+    ? []
+    : filteredData.map(
+        (task) =>
+          ({
+            date: timestampToDateString(task.timestamp),
+            id: task.id,
+            description: task.description,
+            time: millisecondsToString(task.time),
+          } as HistoryDataTable)
+      );
+
+  const today: Date = new Date();
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    const filteredData = !tasks
+      ? []
+      : tasks.filter((row) =>
+          row.description.toLowerCase().includes(value.toLowerCase())
+        );
+    setFilteredData(filteredData);
+  };
+
   return (
     <>
       <p className="text-ebony text-2xl font-bold">{"Trackers history"}</p>
-      <div className="w-full bg-white-lilac flex flex-row align-items-center justify-content-center gap-40px border-radius-8px mt-50px py-22px">
+      <div className="w-full bg-white-lilac flex flex-row align-items-center justify-content-between gap-40px border-radius-8px mt-50px py-22px px-6">
         <div className="flex flex-column">
           <label htmlFor="startDate" className="text-lynch">
             Start date
@@ -92,8 +134,16 @@ export default function HistoryPage() {
           <Calendar
             id="startDate"
             value={startDate}
-            onChange={(e) => setStartDate(e.value)}
+            dateFormat="dd.mm.yy."
+            maxDate={today}
             showIcon
+            onChange={(e) => {
+              setStartDate(e.value as Date);
+
+              if (endDate && e.value && e.value > endDate) {
+                setEndDate(null);
+              }
+            }}
           />
         </div>
         <div className="flex flex-column">
@@ -103,18 +153,23 @@ export default function HistoryPage() {
           <Calendar
             id="endDate"
             value={endDate}
-            onChange={(e) => setEndDate(e.value)}
+            dateFormat="dd.mm.yy."
+            minDate={startDate || undefined}
+            maxDate={today}
             showIcon
+            onChange={(e) => setEndDate(e.value as Date)}
           />
         </div>
         <div className="flex flex-column">
           <label htmlFor="search" className="text-lynch">
             Description contains
           </label>
-          <IconField id="search" iconPosition="right">
-            <InputIcon className="pi pi-times" />
-            <InputText placeholder="Search" />
-          </IconField>
+          <InputText
+            id="search"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
         </div>
       </div>
       <Table

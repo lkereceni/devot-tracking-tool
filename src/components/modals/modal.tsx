@@ -128,6 +128,8 @@ const Modal: FC<ModalProps> = ({ type, task, visible, onHide }: ModalProps) => {
                   }
                 }
 
+                hide(e);
+
                 switch (type) {
                   case "CREATE":
                     await addNewTask({
@@ -162,8 +164,6 @@ const Modal: FC<ModalProps> = ({ type, task, visible, onHide }: ModalProps) => {
                     await deleteTask(task.id);
                     break;
                 }
-
-                hide(e);
               }}
               text
               className="p-3 w-full bg-orange-500 text-white"
