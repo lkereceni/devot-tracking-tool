@@ -1,4 +1,3 @@
-import { classNames } from "primereact/utils";
 import React, { FC, ReactNode } from "react";
 
 type CardWrapperProps = {
@@ -9,10 +8,7 @@ type CardWrapperProps = {
 const CardWrapper: FC<CardWrapperProps> = ({ className, children }) => {
   return (
     <div
-      className={classNames(
-        "bg-white-lilac border-05px border-whisper border-round-lg",
-        className
-      )}
+      className={`bg-white-lilac border-05px border-whisper border-round-lg ${className}`}
     >
       {children}
     </div>

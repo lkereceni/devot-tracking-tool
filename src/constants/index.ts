@@ -18,3 +18,15 @@ export const firestoreTasksCollection = {
   userId: "userId",
   isStopped: "isStopped",
 } as const;
+
+export const appRoutes = {
+  trackers: "/trackers",
+  history: "/history",
+  login: "/login",
+  register: "/register",
+} as const;
+
+export const authType = {
+  login: "LOGIN",
+  register: "REGISTER",
+} as const;

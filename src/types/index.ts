@@ -1,4 +1,4 @@
-import { modalType } from "@/constants";
+import { authType, modalType } from "@/constants";
 
 export type Task = {
   id: string;
@@ -9,3 +9,4 @@ export type Task = {
 };
 
 export type ModalType = (typeof modalType)[keyof typeof modalType];
+export type AuthType = (typeof authType)[keyof typeof authType];
